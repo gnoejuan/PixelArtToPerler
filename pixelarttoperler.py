@@ -3,6 +3,8 @@ import numpy as np
 
 def find_pixel_size(image):
     h, w, _ = image.shape
+    horizontal_count = 1
+    vertical_count = 1
     horizontal_sizes = []
     vertical_sizes = []
 
@@ -11,6 +13,7 @@ def find_pixel_size(image):
 
     for i in range(1, w):
         if np.any(image[:, i, :] != image[:, i - 1, :]):
+            horizontal_count += 1
             if horizontal_gap > 0:
                 horizontal_sizes.append(horizontal_gap)
                 horizontal_gap = 0
@@ -19,6 +22,7 @@ def find_pixel_size(image):
 
     for i in range(1, h):
         if np.any(image[i, :, :] != image[i - 1, :, :]):
+            vertical_count += 1
             if vertical_gap > 0:
                 vertical_sizes.append(vertical_gap)
                 vertical_gap = 0
@@ -30,7 +34,7 @@ def find_pixel_size(image):
     mean_vertical_size = np.mean(vertical_sizes)
     std_vertical_size = np.std(vertical_sizes)
 
-    pixel_size = int(round((mean_horizontal_size + mean_vertical_size) / 2))
+    pixel_size = min(w // horizontal_count, h // vertical_count)
 
     print(f"Mean horizontal size: {mean_horizontal_size}, std dev: {std_horizontal_size}")
     print(f"Mean vertical size: {mean_vertical_size}, std dev: {std_vertical_size}")
